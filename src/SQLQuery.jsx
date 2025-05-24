@@ -1,66 +1,86 @@
-import React, { useState, useEffect } from 'react';
-import { executeQuery } from './db.js';
+import React, { useState } from 'react';
+import { executeQuery } from './db';
+import { resetDBConnection } from './db';
 
-export default function PatientList({ refreshTrigger }) {
-  const [patients, setPatients] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
 
-  async function fetchPatients() {
+export default function SQLQuery({ onQueryExecuted }) {
+  const [query, setQuery] = useState('');
+  const [result, setResult] = useState(null);
+  const [error, setError] = useState('');
+
+  const runQuery = async () => {
     try {
-      setIsLoading(true);
-      const result = await executeQuery('SELECT * FROM patients ORDER BY created_at DESC');
-      setPatients(result.rows);
+      setError('');
+      const res = await executeQuery(query);
+      setResult(res.rows || []);
+      if (onQueryExecuted) onQueryExecuted();
+
+      // 🔁 Broadcast sync to other tabs
+      new BroadcastChannel('patient-sync').postMessage('refresh');
     } catch (err) {
-      console.error('Fetch error:', err);
-      alert('Error fetching patients: ' + err.message);
-    } finally {
-      setIsLoading(false);
+      console.error(err);
+      setResult(null);
+      setError(err.message);
     }
+  };
+  const channel = new BroadcastChannel('patient-sync');
+channel.onmessage = (msg) => {
+  if (msg.data === 'refresh') {
+    resetDBConnection();
   }
+};
 
-  useEffect(() => {
-    fetchPatients();
-  }, [refreshTrigger]);
-
-  if (isLoading) {
-    return (
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <div className="text-center text-gray-600">Loading patients...</div>
-      </div>
-    );
-  }
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md mb-6">
-      <h2 className="text-xl font-bold mb-4 text-gray-800">
-        Patient List ({patients.length} patients)
-      </h2>
-      
-      {patients.length === 0 ? (
-        <p className="text-gray-600 text-center py-4">No patients registered yet.</p>
-      ) : (
-        <div className="space-y-3">
-          {patients.map((patient) => (
-            <div
-              key={patient.id}
-              className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50"
-            >
-              <div className="flex justify-between items-start">
-                <div>
-                  <h3 className="font-semibold text-lg text-gray-800">
-                    {patient.name}
-                  </h3>
-                  <p className="text-gray-600">
-                    Age: {patient.age} | Gender: {patient.gender}
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    ID: {patient.id} | Registered: {new Date(patient.created_at).toLocaleDateString()}
-                  </p>
-                </div>
-              </div>
-            </div>
-          ))}
+    <div className="bg-white p-6 rounded-lg shadow-md mt-8">
+      <h2 className="text-xl font-bold mb-4 text-gray-800">Run Raw SQL Query</h2>
+      <textarea
+        className="w-full h-24 p-3 border border-gray-300 rounded text-black mb-4"
+        placeholder="Enter SQL (e.g., SELECT * FROM patients)"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+      />
+      <button
+        onClick={runQuery}
+        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+      >
+        Run Query
+      </button>
+
+      {error && <p className="text-red-600 mt-4">⚠️ {error}</p>}
+
+      {result && result.length > 0 && (
+        <div className="mt-6 overflow-auto">
+          <table className="min-w-full text-sm text-left border border-gray-200 text-gray-800">
+            <thead>
+              <tr className="bg-gray-100">
+                {Object.keys(result[0]).map((key) => (
+                  <th
+                    key={key}
+                    className="px-4 py-2 border-b border-gray-200 font-semibold text-gray-700"
+                  >
+                    {key}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {result.map((row, i) => (
+                <tr key={i} className="hover:bg-gray-50">
+                  {Object.values(row).map((val, j) => (
+                    <td key={j} className="px-4 py-2 border-b border-gray-200">
+                      {val !== null ? val.toString() : ''}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
+      )}
+
+      {result && result.length === 0 && !error && (
+        <p className="text-gray-600 mt-4">Query executed successfully. No results to display.</p>
       )}
     </div>
   );
