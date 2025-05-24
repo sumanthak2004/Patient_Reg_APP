@@ -81,20 +81,28 @@ let db = null;
 export async function getDB() {
   if (!db) {
     try {
-      // Initialize PGlite with IndexedDB for persistence
       db = new PGlite('idb://patient-db');
-      
-      // Create the patients table
       await db.exec(`
         CREATE TABLE IF NOT EXISTS patients (
           id SERIAL PRIMARY KEY,
-          name TEXT NOT NULL,
-          age INTEGER NOT NULL,
+          first_name TEXT NOT NULL,
+          last_name TEXT NOT NULL,
+          email TEXT NOT NULL,
+          phone TEXT NOT NULL,
+          dob TEXT NOT NULL,
           gender TEXT NOT NULL,
+          address TEXT NOT NULL,
+          city TEXT NOT NULL,
+          state TEXT NOT NULL,
+          zip TEXT NOT NULL,
+          emergency_name TEXT NOT NULL,
+          emergency_phone TEXT NOT NULL,
+          medical_history TEXT,
+          allergies TEXT,
+          medications TEXT,
           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
       `);
-      
       console.log('Database initialized successfully');
     } catch (error) {
       console.error('Database initialization error:', error);
@@ -106,6 +114,9 @@ export async function getDB() {
 
 export async function executeQuery(query) {
   const db = await getDB();
-  const result = await db.query(query);
-  return result;
+  return await db.query(query);
+}
+
+export function resetDBConnection() {
+  db = null; // force reinit
 }
