@@ -23,6 +23,7 @@ const Home = () => {
   };
 
   return (
+    
     <div className="max-w-full min-h-screen bg-white font-sans">
       {/* Navigation Header */}
       <header className="bg-blue-700 text-white py-4 top-0 z-50">
