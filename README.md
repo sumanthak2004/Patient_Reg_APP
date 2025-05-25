@@ -75,8 +75,9 @@ project-root/
 ### 🔹 Run Raw SQL Queries
 1. Scroll to the bottom of the registration page
 2. Enter any valid SQL query (e.g., `SELECT * FROM patients;`)
-3. Click "Run Query"
-4. ⚠️ Warning prompts appear for DELETE, DROP, or TRUNCATE operations
+3. The name of table or the database is patients 
+4. Click "Run Query"
+5. ⚠️ Warning prompts appear for DELETE, DROP, or TRUNCATE operations
 
 ### 🔹 Multi-Tab Support
 - Open the app in multiple tabs
