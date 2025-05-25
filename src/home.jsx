@@ -27,7 +27,7 @@ const Home = () => {
       {/* Navigation Header */}
       <header className="bg-blue-700 text-white py-4 top-0 z-50">
         <div className="max-w-full mx-auto px-5 flex justify-between items-center">
-          <div className="text-2xl font-bold pl-1 pr-80">MEDICAL CLINIC</div>
+          <div className="text-2xl font-bold pl-1 pr-80">MediFlow</div>
           
           {/* Desktop Navigation */}
           <nav className="hidden md:flex space-x-10 gap-7 pl-5 pr-5 ">
