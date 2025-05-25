@@ -86,7 +86,7 @@ project-root/
 ## 🚀 Deployment
 
 This app is deployed on Vercel and can be accessed at:
-**[https://your-project-name.vercel.app](https://your-project-name.vercel.app)**
+**[https://your-project-name.vercel.app](https://patient-reg-app-psi.vercel.app/)**
 
 To deploy your own version:
 1. Push your code to GitHub
