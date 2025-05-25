@@ -2,6 +2,12 @@
 
 A modern, full-featured patient registration web application built with **React**, **Vite**, **PGlite (PostgreSQL via IndexedDB)**, and **Tailwind CSS**. The app allows clinics to register new patients, view or query records using SQL, and manage patient data across multiple browser tabs with real-time sync.
 
+## 🌐 Live Demo
+
+👉 **[Access the deployed app on Vercel](https://patient-reg-app-psi.vercel.app/)**
+
+*Replace `your-project-name` with your actual Vercel deployment URL*
+
 ## 🚀 Features
 
 - ✅ Easy, formal patient registration form
@@ -79,6 +85,15 @@ project-root/
 - Register a patient in one tab — it will reflect live in the others
 - Real-time synchronization across browser tabs
 
+## 🚀 Deployment
+
+This app is deployed on Vercel and can be accessed at:
+**[https://your-project-name.vercel.app](https://your-project-name.vercel.app)**
+
+To deploy your own version:
+1. Push your code to GitHub
+2. Connect your GitHub repository to Vercel
+3. Vercel will automatically build and deploy your app
 
 ## 📦 Dependencies
 
@@ -90,8 +105,4 @@ project-root/
 
 ## 📄 License
 
-This project is for educational and demo purposes. Feel free to modify and use it for personal or academic use.
-
-## 🙌 Credits
-
-Built with ❤️ for simplifying patient intake and medical record access in local clinics.
+This project is for assessment and demo purposes. Feel free to modify and use it for personal or academic use.
