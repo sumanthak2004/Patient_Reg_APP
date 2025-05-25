@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { getDB } from './db';
+import { FaUser, FaEnvelope, FaPhone, FaBirthdayCake, FaVenusMars, FaHome, FaCity, FaMapMarkedAlt, FaIdBadge, FaUserShield, FaNotesMedical, FaPills, FaAllergies } from 'react-icons/fa';
 
 export default function PatientForm({ onPatientAdded }) {
   const [form, setForm] = useState({
@@ -38,8 +39,6 @@ export default function PatientForm({ onPatientAdded }) {
         medical_history: '', allergies: '', medications: ''
       });
       onPatientAdded?.();
-
-      // 🔁 Broadcast sync to other tabs
       new BroadcastChannel('patient-sync').postMessage('refresh');
     } catch (err) {
       console.error(err);
@@ -49,42 +48,103 @@ export default function PatientForm({ onPatientAdded }) {
     }
   };
 
+  const renderField = (label, name, icon, type = 'text', required = true) => (
+    <div className="flex flex-col">
+      <label className="text-sm font-semibold text-gray-800 mb-1 flex items-center gap-2">
+        {icon} {label}{required && ' *'}
+      </label>
+      <input
+        name={name}
+        type={type}
+        value={form[name]}
+        onChange={handleChange}
+        className="mt-1 px-4 py-2 border border-gray-300 rounded-md text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
+        required={required}
+      />
+    </div>
+  );
+
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md mb-6 overflow-y-auto max-h-[90vh]">
-      <h2 className="text-xl font-bold mb-4 text-gray-800">Register New Patient</h2>
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
-        {[
-          ['First Name', 'first_name'], ['Last Name', 'last_name'],
-          ['Email', 'email'], ['Phone Number', 'phone'],
-          ['Date of Birth', 'dob'], ['Gender', 'gender'],
-          ['Address', 'address'], ['City', 'city'],
-          ['State', 'state'], ['ZIP Code', 'zip'],
-          ['Emergency Contact Name', 'emergency_name'],
-          ['Emergency Contact Phone', 'emergency_phone'],
-          ['Medical History', 'medical_history'],
-          ['Allergies', 'allergies'],
-          ['Current Medications', 'medications']
-        ].map(([label, name]) => (
-          <div key={name} className="flex flex-col">
-            <label className="text-sm font-medium text-gray-700">{label}{!['medical_history','allergies','medications'].includes(name) && ' *'}</label>
-            {name === 'gender' ? (
-              <select name="gender" value={form.gender} onChange={handleChange}
-                className="mt-1 px-3 py-2 border rounded text-black">
-                <option value="">Select Gender</option>
-                <option>Male</option><option>Female</option><option>Other</option>
-              </select>
-            ) : name === 'medical_history' || name === 'allergies' || name === 'medications' ? (
-              <textarea name={name} value={form[name]} onChange={handleChange}
-                className="mt-1 px-3 py-2 border rounded text-black" rows="2" />
-            ) : (
-              <input name={name} type={name === 'dob' ? 'date' : 'text'} value={form[name]} onChange={handleChange}
-                className="mt-1 px-3 py-2 border rounded text-black" required={!['medical_history','allergies','medications'].includes(name)} />
-            )}
-          </div>
-        ))}
+    <div className="bg-white p-8 rounded-xl shadow-lg mb-6 overflow-y-auto max-h-[90vh] border border-gray-200">
+      <h2 className="text-2xl font-bold mb-6 text-blue-800 text-center">Register New Patient</h2>
+      <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+        {renderField('First Name', 'first_name', <FaUser />)}
+        {renderField('Last Name', 'last_name', <FaUser />)}
+        {renderField('Email', 'email', <FaEnvelope />, 'email')}
+        {renderField('Phone Number', 'phone', <FaPhone />)}
+        {renderField('Date of Birth', 'dob', <FaBirthdayCake />, 'date')}
+
+        <div className="flex flex-col">
+          <label className="text-sm font-semibold text-gray-800 mb-1 flex items-center gap-2">
+            <FaVenusMars /> Gender *
+          </label>
+          <select
+            name="gender"
+            value={form.gender}
+            onChange={handleChange}
+            className="mt-1 px-4 py-2 border border-gray-300 rounded-md text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          >
+            <option value="">Select Gender</option>
+            <option>Male</option>
+            <option>Female</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        {renderField('Address', 'address', <FaHome />)}
+        {renderField('City', 'city', <FaCity />)}
+        {renderField('State', 'state', <FaMapMarkedAlt />)}
+        {renderField('ZIP Code', 'zip', <FaIdBadge />)}
+
+        {renderField('Emergency Contact Name', 'emergency_name', <FaUserShield />)}
+        {renderField('Emergency Contact Phone', 'emergency_phone', <FaPhone />)}
+
         <div className="col-span-full">
-          <button type="submit" disabled={isSubmitting}
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:opacity-50">
+          <label className="text-sm font-semibold text-gray-800 mb-1 flex items-center gap-2">
+            <FaNotesMedical /> Medical History
+          </label>
+          <textarea
+            name="medical_history"
+            value={form.medical_history}
+            onChange={handleChange}
+            className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
+            rows={2}
+          />
+        </div>
+
+        <div className="col-span-full">
+          <label className="text-sm font-semibold text-gray-800 mb-1 flex items-center gap-2">
+            <FaAllergies /> Allergies
+          </label>
+          <textarea
+            name="allergies"
+            value={form.allergies}
+            onChange={handleChange}
+            className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
+            rows={2}
+          />
+        </div>
+
+        <div className="col-span-full">
+          <label className="text-sm font-semibold text-gray-800 mb-1 flex items-center gap-2">
+            <FaPills /> Current Medications
+          </label>
+          <textarea
+            name="medications"
+            value={form.medications}
+            onChange={handleChange}
+            className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
+            rows={2}
+          />
+        </div>
+
+        <div className="col-span-full">
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full bg-blue-700 text-white py-3 px-6 rounded-md font-semibold hover:bg-blue-800 transition duration-300 disabled:opacity-50"
+          >
             {isSubmitting ? 'Registering...' : 'Register Patient'}
           </button>
         </div>
