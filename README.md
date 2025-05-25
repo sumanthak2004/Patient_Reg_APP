@@ -79,14 +79,6 @@ project-root/
 - Register a patient in one tab — it will reflect live in the others
 - Real-time synchronization across browser tabs
 
-## 💡 Customization
-
-- **Change clinic name** in `home.jsx`:
-  ```jsx
-  HealthCare Hub
-  ```
-- **Replace background image** in hero section with your own image URL
-- **Modify SQL schema** in `db.js` to add new tables or fields
 
 ## 📦 Dependencies
 
