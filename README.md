@@ -6,8 +6,6 @@ A modern, full-featured patient registration web application built with **React*
 
 👉 **[Access the deployed app on Vercel](https://patient-reg-app-psi.vercel.app/)**
 
-*Replace `your-project-name` with your actual Vercel deployment URL*
-
 ## 🚀 Features
 
 - ✅ Easy, formal patient registration form
