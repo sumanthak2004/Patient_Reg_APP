@@ -1,7 +1,5 @@
-import React, { useState } from 'react';
-import { executeQuery } from './db';
-import { resetDBConnection } from './db';
-
+import React, { useState, useEffect } from 'react';
+import { executeQuery, resetDBConnection } from './db';
 
 export default function SQLQuery({ onQueryExecuted }) {
   const [query, setQuery] = useState('');
@@ -11,11 +9,19 @@ export default function SQLQuery({ onQueryExecuted }) {
   const runQuery = async () => {
     try {
       setError('');
+      const lowerQuery = query.trim().toLowerCase();
+
+      // 🛑 Detect destructive SQL
+      if (['delete', 'truncate', 'drop'].some((keyword) => lowerQuery.startsWith(keyword))) {
+        const confirmDanger = window.confirm(
+          '⚠️ WARNING: This query may modify or delete data.\nAre you sure you want to continue?'
+        );
+        if (!confirmDanger) return;
+      }
+
       const res = await executeQuery(query);
       setResult(res.rows || []);
-      if (onQueryExecuted) onQueryExecuted();
-
-      // 🔁 Broadcast sync to other tabs
+      onQueryExecuted?.();
       new BroadcastChannel('patient-sync').postMessage('refresh');
     } catch (err) {
       console.error(err);
@@ -23,13 +29,16 @@ export default function SQLQuery({ onQueryExecuted }) {
       setError(err.message);
     }
   };
-  const channel = new BroadcastChannel('patient-sync');
-channel.onmessage = (msg) => {
-  if (msg.data === 'refresh') {
-    resetDBConnection();
-  }
-};
 
+  useEffect(() => {
+    const channel = new BroadcastChannel('patient-sync');
+    channel.onmessage = (msg) => {
+      if (msg.data === 'refresh') {
+        resetDBConnection();
+      }
+    };
+    return () => channel.close();
+  }, []);
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md mt-8">
