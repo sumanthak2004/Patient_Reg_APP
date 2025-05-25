@@ -31,6 +31,8 @@ project-root/
 │   ├── index.css          # Tailwind/global styles
 │   └── App.css            # Component-level styles
 ├── .gitignore             # Git exclusions
+├── eslint.config.js       # ESLint configuration
+├── index.html             # Main HTML entry point
 ├── package.json           # Project metadata and dependencies
 ├── package-lock.json      # Exact dependency tree
 ├── vite.config.js         # Vite bundler configuration
@@ -77,6 +79,14 @@ project-root/
 - Register a patient in one tab — it will reflect live in the others
 - Real-time synchronization across browser tabs
 
+## 💡 Customization
+
+- **Change clinic name** in `home.jsx`:
+  ```jsx
+  HealthCare Hub
+  ```
+- **Replace background image** in hero section with your own image URL
+- **Modify SQL schema** in `db.js` to add new tables or fields
 
 ## 📦 Dependencies
 
@@ -89,3 +99,7 @@ project-root/
 ## 📄 License
 
 This project is for educational and demo purposes. Feel free to modify and use it for personal or academic use.
+
+## 🙌 Credits
+
+Built with ❤️ for simplifying patient intake and medical record access in local clinics.
