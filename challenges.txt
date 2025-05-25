@@ -1,0 +1,7 @@
+Few of the challanges I faced while completing this task are as follows : 
+  * One of the problems that I ran into was after deploying to Vercel was , if I refreshed a page like /registration or opened it in a new tab, I’d get a 404: NOT_FOUND error. Everything worked fine while navigating within the app — but not when accessing routes directly.
+Turns out this is a common issue with React Router on Vercel. The solution was to create a vercel.json file that tells Vercel to send all routes to index.html so React Router can handle them.
+
+  * Another challenge came up when I opened the app in two different tabs. If I registered a patient in one tab, the other tab wouldn’t reflect the update unless I refreshed it manually. This could lead to inconsistent data.
+ 
+ These were the challanges I faced .  
